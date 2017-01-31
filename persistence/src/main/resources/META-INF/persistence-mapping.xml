@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+        version="1.0">
+
+    <mapped-superclass class="net.thoughtforge.model.PersistentEntity" access="FIELD">
+        <attributes>
+            <id name="id">
+                <generated-value/>
+            </id>
+            
+            <version name="version"/>
+        </attributes>
+    </mapped-superclass>
+    
+    <entity class="net.thoughtforge.model.User" access="FIELD">
+        <attributes>
+            <basic name="firstName"/>
+            <basic name="lastName"/>
+            <basic name="password"/>
+            <basic name="username"/>
+
+            <many-to-many name="userGroups">
+                <join-table name="User_UserGroup_userGroups">
+                    <join-column name="userTokenHolderIndexId"/>
+                    <inverse-join-column name="userTokenIndexId"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+    
+    <entity class="net.thoughtforge.model.UserGroup" access="FIELD">
+        <attributes>
+            <basic name="name"/>
+
+            <many-to-one name="parent">
+                <join-column name="parentId"/>
+            </many-to-one>
+            
+            <one-to-many name="children" mapped-by="parent"/>
+                        
+            <many-to-many name="users" mapped-by="userGroups"/>
+        </attributes>
+    </entity>
+    
+    <entity class="net.thoughtforge.model.UserToken">
+        <attributes>
+            <basic name="name"/>
+        </attributes>
+    </entity>
+    
+    <entity class="net.thoughtforge.model.UserTokenHolder" access="FIELD">
+        <inheritance strategy="JOINED"/>
+        
+        <attributes>
+            <many-to-many name="userTokens">
+                <join-table name="UserTokenHolder_UserToken_userTokens">
+                    <join-column name="userTokenHolderIndexId"/>
+                    <inverse-join-column name="userTokenIndexId"/>
+                </join-table>
+            </many-to-many>
+        </attributes>
+    </entity>
+</entity-mappings>
